@@ -11,3 +11,12 @@ run: build
 stop:
 	@-pkill -SIGTERM -f "./tmp/${BINARY_NAME}"
 	@echo "NewNews API stopped!"
+
+start_compose:
+	docker-compose up -d
+
+stop_compose:
+	docker-compose down
+
+db_connect:
+	@psql -U postgres -W --port=5439 --host=localhost --dbname=newnews_development
