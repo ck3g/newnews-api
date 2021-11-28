@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/ck3g/newnews-api/pkg/jsonh"
 )
 
 func TestHealthHandler(t *testing.T) {
@@ -22,10 +24,10 @@ func TestHealthHandler(t *testing.T) {
 		t.Errorf("wrong status code: want %v; got %v", http.StatusOK, status)
 	}
 
-	wantBody := `{"status":"Healthy"}`
-	gotBody := rr.Body.String()
-	if wantBody != gotBody {
-		t.Errorf("wrong body: want %v; got %v", wantBody, gotBody)
+	wantBody := []byte(`{ "status": "Healthy" }`)
+	gotBody := rr.Body.Bytes()
+	if !jsonh.Equal(wantBody, gotBody) {
+		t.Errorf("wrong body: want %s; got %s", wantBody, gotBody)
 	}
 }
 
@@ -45,9 +47,15 @@ func TestHomeHandler(t *testing.T) {
 		t.Errorf("wrong status code: want %v; got %v", http.StatusOK, status)
 	}
 
-	wantBody := `{"items":[{"title":"Google", "link":"https://google.com"}, {"title":"Apple", "link":"https://apple.com"}]}`
-	gotBody := rr.Body.String()
-	if wantBody != gotBody {
-		t.Errorf("wrong body: want %v; got %v", wantBody, gotBody)
+	wantBody := []byte(`
+		{
+			"items": [
+				{ "title": "Google", "link": "https://google.com" },
+				{ "title": "Apple", "link": "https://apple.com" }
+			]
+		}`)
+	gotBody := rr.Body.Bytes()
+	if !jsonh.Equal(wantBody, gotBody) {
+		t.Errorf("wrong body: want %s; got %s", wantBody, gotBody)
 	}
 }
