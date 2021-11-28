@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/ck3g/newnews-api/data"
 	"github.com/ck3g/newnews-api/handlers"
 )
 
@@ -12,8 +13,11 @@ type application struct {
 }
 
 func main() {
+	models := data.New()
 	app := &application{
-		Handlers: &handlers.Handlers{},
+		Handlers: &handlers.Handlers{
+			Models: models,
+		},
 	}
 
 	port := os.Getenv("PORT")
