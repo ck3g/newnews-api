@@ -16,9 +16,11 @@ type application struct {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if os.Getenv("APP_ENV") != "production" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 
 	models := data.New()
@@ -35,6 +37,6 @@ func main() {
 		Handler: app.routes(),
 	}
 
-	err = srv.ListenAndServe()
+	err := srv.ListenAndServe()
 	srv.ErrorLog.Fatal(err)
 }
