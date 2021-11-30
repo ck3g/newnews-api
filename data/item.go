@@ -5,13 +5,13 @@ import (
 )
 
 type Item struct {
-	ID        int       `db:"id" json:"id"`                 // id biging
-	Title     string    `db:"title" json:"title"`           // title text limit 1024
-	Link      string    `db:"link" json:"link"`             // link text limit 2048
-	FromSite  string    `db:"from_site" json:"from_site"`   // from_site text limit 128
-	Points    int       `db:"points" json:"points"`         // points int default 0
-	CreatedAt time.Time `db:"created_at" json:"created_at"` // created_at datetime
-	UpdatedAt time.Time `db:"updated_at" json:"updated_at"` // updated_at datetime
+	ID        int       `db:"id" json:"id"`
+	Title     string    `db:"title" json:"title"`
+	Link      string    `db:"link" json:"link"`
+	FromSite  string    `db:"from_site" json:"from_site"`
+	Points    int       `db:"points" json:"points"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 }
 
 func (i *Item) GetAllNew() ([]*Item, error) {
