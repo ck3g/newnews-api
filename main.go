@@ -4,8 +4,11 @@ import (
 	"net/http"
 	"os"
 
+	"log"
+
 	"github.com/ck3g/newnews-api/data"
 	"github.com/ck3g/newnews-api/handlers"
+	"github.com/joho/godotenv"
 )
 
 type application struct {
@@ -13,6 +16,11 @@ type application struct {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	models := data.New()
 	app := &application{
 		Handlers: &handlers.Handlers{
@@ -21,15 +29,12 @@ func main() {
 	}
 
 	port := os.Getenv("PORT")
-	if port == "" {
-		port = "4000"
-	}
 
 	srv := &http.Server{
 		Addr:    ":" + port,
 		Handler: app.routes(),
 	}
 
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	srv.ErrorLog.Fatal(err)
 }
