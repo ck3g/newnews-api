@@ -12,7 +12,7 @@ type ItemsModel struct {
 }
 
 type Item struct {
-	ID        int       `db:"id" json:"id"`
+	ID        int64     `db:"id" json:"id"`
 	Title     string    `db:"title" json:"title"`
 	Link      string    `db:"link" json:"link"`
 	FromSite  string    `db:"from_site" json:"from_site"`
@@ -39,4 +39,17 @@ func (i *ItemsModel) AllNew() ([]*Item, error) {
 	}
 
 	return all, nil
+}
+
+func (i *ItemsModel) Create(item Item) (int64, error) {
+	var id int64
+
+	query := "INSERT INTO items (title, link, from_site, points, created_at, updated_at) VALUES ($1, $2, $3, $4, NOW(), NOW()) RETURNING id"
+	args := []interface{}{item.Title, item.Link, item.FromSite, item.Points}
+	err := i.DB.QueryRow(context.Background(), query, args...).Scan(&id)
+	if err != nil {
+		return id, err
+	}
+
+	return id, nil
 }
