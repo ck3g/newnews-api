@@ -1,11 +1,19 @@
 package data
 
+import (
+	"github.com/jackc/pgx/v4"
+)
+
+var db *pgx.Conn
+
 type Models struct {
-	Items Item
+	Items ItemsModel
 }
 
-func New() Models {
+func New(databasePool *pgx.Conn) Models {
+	db = databasePool
+
 	return Models{
-		Items: Item{},
+		Items: ItemsModel{DB: db},
 	}
 }

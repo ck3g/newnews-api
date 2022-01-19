@@ -19,7 +19,7 @@ func (h *Handlers) Health(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
-	items, _ := h.Models.Items.GetAllNew()
+	items, _ := h.Models.Items.AllNew()
 	env := envelope{
 		"items": items,
 	}
