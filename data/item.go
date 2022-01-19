@@ -1,7 +1,12 @@
 package data
 
 import (
+	"context"
+	"log"
+	"os"
 	"time"
+
+	"github.com/jackc/pgx/v4"
 )
 
 type Item struct {
@@ -15,25 +20,25 @@ type Item struct {
 }
 
 func (i *Item) GetAllNew() ([]*Item, error) {
-	all := []*Item{
-		{
-			ID:        1,
-			Title:     "Google",
-			Link:      "https://google.com",
-			FromSite:  "google.com",
-			Points:    5,
-			CreatedAt: time.Now().Add(time.Duration(-1) * time.Hour),
-			UpdatedAt: time.Now().Add(time.Duration(-1) * time.Hour),
-		},
-		{
-			ID:        2,
-			Title:     "Apple",
-			Link:      "https://apple.com",
-			FromSite:  "apple.com",
-			Points:    10,
-			CreatedAt: time.Now().Add(time.Duration(-30) * time.Minute),
-			UpdatedAt: time.Now().Add(time.Duration(-30) * time.Minute),
-		},
+	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer conn.Close(context.Background())
+
+	rows, _ := conn.Query(context.Background(), "SELECT id, title, link, from_site, points, created_at, updated_at FROM items")
+
+	all := []*Item{}
+
+	for rows.Next() {
+		var i Item
+		err := rows.Scan(&i.ID, &i.Title, &i.Link, &i.FromSite, &i.Points, &i.CreatedAt, &i.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		all = append(all, &i)
 	}
 
 	return all, nil

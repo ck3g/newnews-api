@@ -4,7 +4,7 @@ build:
 	@echo "Building NewNews API..."
 	@go build -o tmp/${BINARY_NAME}
 
-run: build
+start: build
 	@echo "Starting NewNews API..."
 	@./tmp/${BINARY_NAME} &
 
