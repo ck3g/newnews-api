@@ -19,7 +19,14 @@ func (h *Handlers) Health(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
-	items, _ := h.Models.Items.AllNew()
+	items, err := h.Models.Items.AllNew()
+	if err != nil {
+		env := envelope{
+			"error": "Internal Server Error",
+		}
+		h.writeJSON(w, http.StatusInternalServerError, env, nil)
+	}
+
 	env := envelope{
 		"items": items,
 	}
