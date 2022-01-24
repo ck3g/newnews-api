@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/ck3g/newnews-api/data"
 	"github.com/ck3g/newnews-api/pkg/jsonh"
 )
 
@@ -32,15 +33,15 @@ func TestHealthHandler(t *testing.T) {
 }
 
 func TestHomeHandler(t *testing.T) {
-	t.Skip("TODO: Do not use DB in Handlers. Add MockModel")
-
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	rr := httptest.NewRecorder()
-	h := Handlers{}
+	h := Handlers{
+		Models: data.NewMock(),
+	}
 	handler := http.HandlerFunc(h.Home)
 
 	handler.ServeHTTP(rr, req)

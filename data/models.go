@@ -36,3 +36,9 @@ func New(databasePool *pgx.Conn) Models {
 		Items: &ItemsModel{DB: db},
 	}
 }
+
+func NewMock() Models {
+	return Models{
+		Items: &MockItemsModel{},
+	}
+}
