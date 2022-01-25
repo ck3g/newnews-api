@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
-func newTestDB(t *testing.T) (*pgx.Conn, func()) {
+func newTestDB(t *testing.T) *pgx.Conn {
 	db, err := pgx.Connect(context.Background(), "postgres://postgres:password@localhost:5439/newnews_test?sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -23,7 +23,7 @@ func newTestDB(t *testing.T) (*pgx.Conn, func()) {
 		t.Fatal(err)
 	}
 
-	return db, func() {
+	t.Cleanup(func() {
 		script, err := os.ReadFile("./testdata/teardown.sql")
 		if err != nil {
 			t.Fatal(err)
@@ -34,5 +34,7 @@ func newTestDB(t *testing.T) (*pgx.Conn, func()) {
 		}
 
 		db.Close(context.Background())
-	}
+	})
+
+	return db
 }

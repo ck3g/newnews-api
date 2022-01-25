@@ -10,8 +10,7 @@ type TestItem struct {
 }
 
 func TestItem_AllNew(t *testing.T) {
-	db, teardown := newTestDB(t)
-	defer teardown()
+	db := newTestDB(t)
 
 	model := ItemsModel{DB: db}
 
@@ -43,8 +42,7 @@ func TestItem_AllNew(t *testing.T) {
 }
 
 func TestItem_Create(t *testing.T) {
-	db, teardown := newTestDB(t)
-	defer teardown()
+	db := newTestDB(t)
 
 	model := ItemsModel{DB: db}
 
@@ -87,8 +85,7 @@ func TestItem_Create(t *testing.T) {
 }
 
 func TestItem_Find(t *testing.T) {
-	db, teardown := newTestDB(t)
-	defer teardown()
+	db := newTestDB(t)
 
 	model := ItemsModel{DB: db}
 
@@ -124,8 +121,7 @@ func TestItem_Find(t *testing.T) {
 }
 
 func TestItem_Destroy(t *testing.T) {
-	db, teardown := newTestDB(t)
-	defer teardown()
+	db := newTestDB(t)
 
 	model := ItemsModel{DB: db}
 	items, err := model.AllNew()
