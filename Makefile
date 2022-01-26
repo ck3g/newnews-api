@@ -20,3 +20,12 @@ stop_compose:
 
 db_connect:
 	@psql -U postgres -W --port=5439 --host=localhost --dbname=newnews_development
+
+migration:
+	@migrate create -ext sql -dir db/migrations -seq $(name)
+
+migrate:
+	@migrate -database $(database_url) -path db/migrations up
+
+rollback:
+	@migrate -database $(database_url) -path db/migrations down
