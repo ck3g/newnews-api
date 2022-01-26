@@ -29,6 +29,16 @@ type Item struct {
 	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 }
 
+type User struct {
+	ID             int64     `db:"id" json:"id"`
+	Username       string    `db:"username" json:"username"`
+	Email          string    `db:"email" json:"-"`
+	HashedPassword []byte    `db:"hashed_password" json:"-"`
+	Karma          int       `db:"karma" json:"karma"`
+	CreatedAt      time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt      time.Time `db:"updated_at" json:"updated_at"`
+}
+
 func New(databasePool *pgx.Conn) Models {
 	db = databasePool
 
