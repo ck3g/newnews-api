@@ -29,6 +29,13 @@ type Item struct {
 	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 }
 
+type UsersDatastorage interface {
+	Create(username, password string) (int64, error)
+	Find(id int64) (*User, error)
+	FindByUsername(username string) (*User, error)
+	Exists(username string) bool
+}
+
 type User struct {
 	ID             int64     `db:"id" json:"id"`
 	Username       string    `db:"username" json:"username"`

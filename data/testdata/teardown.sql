@@ -1,1 +1,2 @@
 TRUNCATE TABLE items;
+TRUNCATE TABLE users;
