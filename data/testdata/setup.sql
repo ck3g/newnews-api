@@ -27,9 +27,3 @@ INSERT INTO items (title, link, from_site, points) VALUES (
   'google.com',
   10
 );
-
-INSERT INTO users (username, email, hashed_password) VALUES (
-  'user',
-  'user@example.com',
-  'hashed-password'
-);

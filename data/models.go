@@ -39,7 +39,7 @@ type UsersDatastorage interface {
 type User struct {
 	ID             int64     `db:"id" json:"id"`
 	Username       string    `db:"username" json:"username"`
-	Email          string    `db:"email" json:"-"`
+	Email          []byte    `db:"email" json:"-"`
 	HashedPassword []byte    `db:"hashed_password" json:"-"`
 	Karma          int       `db:"karma" json:"karma"`
 	CreatedAt      time.Time `db:"created_at" json:"created_at"`

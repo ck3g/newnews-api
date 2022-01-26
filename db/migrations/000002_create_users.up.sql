@@ -7,3 +7,6 @@ CREATE TABLE IF NOT EXISTS users(
   email varchar(255),
   hashed_password CHAR(60) NOT NULL
 );
+
+CREATE UNIQUE INDEX idx_users_username ON users(username);
+CREATE UNIQUE INDEX idx_users_email ON users(email);

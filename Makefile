@@ -21,6 +21,9 @@ stop_compose:
 db_connect:
 	@psql -U postgres -W --port=5439 --host=localhost --dbname=newnews_development
 
+db_connect_test:
+	@psql -U postgres -W --port=5439 --host=localhost --dbname=newnews_test
+
 migration:
 	@migrate create -ext sql -dir db/migrations -seq $(name)
 
