@@ -12,6 +12,10 @@ var users = []*User{}
 var userLastID int64 = 0
 
 func (m *MockUserModel) Create(username, password string) (int64, error) {
+	if m.Exists(username) {
+		return 0, ErrUserExists
+	}
+
 	hashedPassword := []byte(password)
 
 	user := &User{

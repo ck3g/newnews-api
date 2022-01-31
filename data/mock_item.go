@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// TODO: rename MockItemsModel to MockItemModel
 type MockItemsModel struct {
 }
 

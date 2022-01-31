@@ -18,7 +18,7 @@ func (m *UserModel) Create(username, password string) (int64, error) {
 	username = strings.Trim(username, " ")
 
 	if m.Exists(username) {
-		return id, errors.New("user already exists")
+		return id, ErrUserExists
 	}
 
 	hashedPassword := password

@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
+// TODO: rename ItemsModel to ItemModel
 type ItemsModel struct {
 	DB *pgx.Conn
 }

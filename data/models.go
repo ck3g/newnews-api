@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	"time"
 
 	"github.com/jackc/pgx/v4"
@@ -8,8 +9,13 @@ import (
 
 var db *pgx.Conn
 
+var (
+	ErrUserExists = errors.New("data: user already exists")
+)
+
 type Models struct {
 	Items ItemsDatastorage
+	Users UsersDatastorage
 }
 
 type ItemsDatastorage interface {
@@ -51,11 +57,13 @@ func New(databasePool *pgx.Conn) Models {
 
 	return Models{
 		Items: &ItemsModel{DB: db},
+		Users: &UserModel{DB: db},
 	}
 }
 
 func NewMock() Models {
 	return Models{
 		Items: &MockItemsModel{},
+		Users: &MockUserModel{},
 	}
 }

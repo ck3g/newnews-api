@@ -21,6 +21,11 @@ func TestMockUser_Create(t *testing.T) {
 	if user.Username != "user" {
 		t.Errorf("user has wrong username; want %s; got %s", "user", user.Username)
 	}
+
+	_, err = model.Create("user", "password")
+	if err == nil {
+		t.Error("expected to get an error when creating a user with existing username, got nothing")
+	}
 }
 
 func TestMockUser_Find(t *testing.T) {
