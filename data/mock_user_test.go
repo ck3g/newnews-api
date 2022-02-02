@@ -2,6 +2,8 @@ package data
 
 import (
 	"testing"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func TestMockUser_Create(t *testing.T) {
@@ -20,6 +22,11 @@ func TestMockUser_Create(t *testing.T) {
 
 	if user.Username != "user" {
 		t.Errorf("user has wrong username; want %s; got %s", "user", user.Username)
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte("password"))
+	if err != nil {
+		t.Error("expected password to be properly hashed")
 	}
 
 	_, err = model.Create("user", "password")

@@ -1,6 +1,10 @@
 package data
 
-import "testing"
+import (
+	"testing"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 func TestUser_Create(t *testing.T) {
 	db := newTestDB(t)
@@ -18,6 +22,11 @@ func TestUser_Create(t *testing.T) {
 
 	if user.ID != id {
 		t.Errorf("wrong user ID returned; want %d; got %d", id, user.ID)
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte("password"))
+	if err != nil {
+		t.Error("expected password to be properly hashed", err, user.HashedPassword)
 	}
 
 	_, err = model.Create("username", "password")
@@ -45,6 +54,11 @@ func TestUser_Find(t *testing.T) {
 		t.Errorf("wrong user returned; want ID %d; got %d", id, user.ID)
 	}
 
+	err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte("password"))
+	if err != nil {
+		t.Error("expected password to be properly hashed", err, user.HashedPassword)
+	}
+
 	_, err = model.Find(-1)
 	if err == nil {
 		t.Error("expected not to find a user, but found one")
@@ -57,9 +71,14 @@ func TestUser_FindByUsername(t *testing.T) {
 
 	model.Create("user", "password")
 
-	_, err := model.FindByUsername("User")
+	user, err := model.FindByUsername("User")
 	if err != nil {
 		t.Error("expected to find a user, but it wasn't found")
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte("password"))
+	if err != nil {
+		t.Error("expected password to be properly hashed", err, user.HashedPassword)
 	}
 
 	_, err = model.FindByUsername("unknown")

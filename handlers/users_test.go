@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/ck3g/newnews-api/data"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func TestUsers_Create(t *testing.T) {
@@ -74,8 +75,14 @@ func TestUsers_Create(t *testing.T) {
 				t.Errorf("wrong status code: want %v; got %v", tt.wantStatus, status)
 			}
 
-			if !h.Models.Users.Exists(tt.username) {
+			user, err := h.Models.Users.FindByUsername(tt.username)
+			if err != nil {
 				t.Error("expected user to be existed")
+			}
+
+			err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(tt.password))
+			if err != nil {
+				t.Error("expected hashed password to match the password, but it didn't")
 			}
 
 			err = json.Unmarshal(rr.Body.Bytes(), &resp)

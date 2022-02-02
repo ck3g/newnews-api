@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type MockUserModel struct{}
@@ -16,7 +18,10 @@ func (m *MockUserModel) Create(username, password string) (int64, error) {
 		return 0, ErrUserExists
 	}
 
-	hashedPassword := []byte(password)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return 0, err
+	}
 
 	user := &User{
 		ID:             userLastID + 1,
