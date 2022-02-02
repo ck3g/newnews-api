@@ -58,7 +58,7 @@ func TestUsers_Create(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rr := httptest.NewRecorder()
 
-			mockUserModel := data.MockItemsModel{}
+			mockUserModel := data.MockItemModel{}
 			mockUserModel.Truncate()
 			h.Models.Users.Create("exists@example.com", "password")
 

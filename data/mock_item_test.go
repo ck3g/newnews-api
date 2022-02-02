@@ -3,7 +3,7 @@ package data
 import "testing"
 
 func TestMockItem_AllNew(t *testing.T) {
-	model := MockItemsModel{}
+	model := MockItemModel{}
 	model.Truncate()
 
 	items, _ := model.AllNew()
@@ -29,7 +29,7 @@ func TestMockItem_AllNew(t *testing.T) {
 }
 
 func TestMockItem_Create(t *testing.T) {
-	model := MockItemsModel{}
+	model := MockItemModel{}
 	model.Truncate()
 
 	item := Item{
@@ -56,7 +56,7 @@ func TestMockItem_Create(t *testing.T) {
 }
 
 func TestMockItem_Find(t *testing.T) {
-	model := MockItemsModel{}
+	model := MockItemModel{}
 	model.Truncate()
 
 	item, err := model.Find(1)
@@ -84,7 +84,7 @@ func TestMockItem_Find(t *testing.T) {
 }
 
 func TestMockItem_Destroy(t *testing.T) {
-	model := MockItemsModel{}
+	model := MockItemModel{}
 	model.Truncate()
 
 	id1, _ := model.Create(Item{

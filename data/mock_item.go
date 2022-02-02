@@ -5,18 +5,17 @@ import (
 	"time"
 )
 
-// TODO: rename MockItemsModel to MockItemModel
-type MockItemsModel struct {
+type MockItemModel struct {
 }
 
 var items []*Item
 var lastID int64
 
-func (m *MockItemsModel) AllNew() ([]*Item, error) {
+func (m *MockItemModel) AllNew() ([]*Item, error) {
 	return items, nil
 }
 
-func (m *MockItemsModel) Create(item Item) (int64, error) {
+func (m *MockItemModel) Create(item Item) (int64, error) {
 	item.ID = lastID + 1
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
@@ -28,7 +27,7 @@ func (m *MockItemsModel) Create(item Item) (int64, error) {
 	return item.ID, nil
 }
 
-func (m *MockItemsModel) Find(id int64) (*Item, error) {
+func (m *MockItemModel) Find(id int64) (*Item, error) {
 	for _, item := range items {
 		if item.ID == id {
 			return item, nil
@@ -38,7 +37,7 @@ func (m *MockItemsModel) Find(id int64) (*Item, error) {
 	return nil, errors.New("not found")
 }
 
-func (m *MockItemsModel) Destroy(id int64) {
+func (m *MockItemModel) Destroy(id int64) {
 	var index int
 	for i, item := range items {
 		if item.ID == id {
@@ -51,7 +50,7 @@ func (m *MockItemsModel) Destroy(id int64) {
 	}
 }
 
-func (m *MockItemsModel) Truncate() {
+func (m *MockItemModel) Truncate() {
 	items = []*Item{}
 	lastID = 0
 }

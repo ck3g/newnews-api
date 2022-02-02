@@ -56,14 +56,14 @@ func New(databasePool *pgx.Conn) Models {
 	db = databasePool
 
 	return Models{
-		Items: &ItemsModel{DB: db},
+		Items: &ItemModel{DB: db},
 		Users: &UserModel{DB: db},
 	}
 }
 
 func NewMock() Models {
 	return Models{
-		Items: &MockItemsModel{},
+		Items: &MockItemModel{},
 		Users: &MockUserModel{},
 	}
 }

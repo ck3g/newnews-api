@@ -6,12 +6,11 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
-// TODO: rename ItemsModel to ItemModel
-type ItemsModel struct {
+type ItemModel struct {
 	DB *pgx.Conn
 }
 
-func (i *ItemsModel) AllNew() ([]*Item, error) {
+func (i *ItemModel) AllNew() ([]*Item, error) {
 	rows, err := i.DB.Query(context.Background(), "SELECT id, title, link, from_site, points, created_at, updated_at FROM items")
 	if err != nil {
 		return nil, err
@@ -34,7 +33,7 @@ func (i *ItemsModel) AllNew() ([]*Item, error) {
 	return all, nil
 }
 
-func (i *ItemsModel) Create(item Item) (int64, error) {
+func (i *ItemModel) Create(item Item) (int64, error) {
 	var id int64
 
 	query := "INSERT INTO items (title, link, from_site, points) VALUES ($1, $2, $3, $4) RETURNING id"
@@ -47,7 +46,7 @@ func (i *ItemsModel) Create(item Item) (int64, error) {
 	return id, nil
 }
 
-func (i *ItemsModel) Find(id int64) (*Item, error) {
+func (i *ItemModel) Find(id int64) (*Item, error) {
 	var item Item
 
 	query := "SELECT id, title, link, from_site, points, created_at, updated_at FROM items WHERE id=$1"
@@ -61,6 +60,6 @@ func (i *ItemsModel) Find(id int64) (*Item, error) {
 	return &item, nil
 }
 
-func (i *ItemsModel) Destroy(id int64) {
+func (i *ItemModel) Destroy(id int64) {
 	i.DB.Exec(context.Background(), "DELETE FROM items WHERE id=$1", id)
 }

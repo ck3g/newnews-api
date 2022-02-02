@@ -12,7 +12,7 @@ type TestItem struct {
 func TestItem_AllNew(t *testing.T) {
 	db := newTestDB(t)
 
-	model := ItemsModel{DB: db}
+	model := ItemModel{DB: db}
 
 	items, err := model.AllNew()
 	if err != nil {
@@ -44,7 +44,7 @@ func TestItem_AllNew(t *testing.T) {
 func TestItem_Create(t *testing.T) {
 	db := newTestDB(t)
 
-	model := ItemsModel{DB: db}
+	model := ItemModel{DB: db}
 
 	item := Item{
 		Title:    "Apple",
@@ -87,7 +87,7 @@ func TestItem_Create(t *testing.T) {
 func TestItem_Find(t *testing.T) {
 	db := newTestDB(t)
 
-	model := ItemsModel{DB: db}
+	model := ItemModel{DB: db}
 
 	item := Item{
 		Title:    "Apple",
@@ -123,7 +123,7 @@ func TestItem_Find(t *testing.T) {
 func TestItem_Destroy(t *testing.T) {
 	db := newTestDB(t)
 
-	model := ItemsModel{DB: db}
+	model := ItemModel{DB: db}
 	items, err := model.AllNew()
 	if err != nil {
 		t.Error(err)
