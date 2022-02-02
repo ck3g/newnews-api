@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -42,6 +43,20 @@ func TestHomeHandler(t *testing.T) {
 	h := Handlers{
 		Models: data.NewMock(),
 	}
+	item1 := data.Item{
+		Title:    "Google",
+		Link:     "https://google.com",
+		FromSite: "google.com",
+		Points:   10,
+	}
+	item2 := data.Item{
+		Title:    "Apple",
+		Link:     "https://apple.com",
+		FromSite: "apple.com",
+		Points:   20,
+	}
+	h.Models.Items.Create(item1)
+	h.Models.Items.Create(item2)
 	handler := http.HandlerFunc(h.Home)
 
 	handler.ServeHTTP(rr, req)
@@ -50,6 +65,47 @@ func TestHomeHandler(t *testing.T) {
 		t.Errorf("wrong status code: want %v; got %v", http.StatusOK, status)
 	}
 
-	// TODO: bring test back
-	// PROBLEMS: Figure out how to deal with datetime (compare, ignore, something else)
+	type itemResponse struct {
+		Title    string `json:"title"`
+		Link     string `json:"link"`
+		FromSite string `json:"from_site"`
+		Points   int    `json:"points"`
+	}
+
+	type homeResponse struct {
+		Items []itemResponse `json:"items"`
+	}
+
+	var resp homeResponse
+
+	err = json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp.Items) != 2 {
+		t.Errorf("wrong items number returned; want %d; got %d", 2, len(resp.Items))
+	}
+
+	expected := homeResponse{
+		Items: []itemResponse{
+			{
+				Title:    item1.Title,
+				Link:     item1.Link,
+				FromSite: item1.FromSite,
+				Points:   item1.Points,
+			},
+			{
+				Title:    item2.Title,
+				Link:     item2.Link,
+				FromSite: item2.FromSite,
+				Points:   item2.Points,
+			},
+		},
+	}
+
+	if expected.Items[0] != resp.Items[0] || expected.Items[1] != resp.Items[1] {
+		t.Errorf("wrong items returned")
+	}
+
 }
