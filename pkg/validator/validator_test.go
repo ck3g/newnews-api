@@ -55,3 +55,98 @@ func TestAddError(t *testing.T) {
 		t.Errorf("wrong number of errors; want %d; got %d", 2, len(v.Errors))
 	}
 }
+
+func TestValidatePresenseOf(t *testing.T) {
+	tests := []struct {
+		name  string
+		field string
+		value string
+		valid bool
+		msg   string
+	}{
+		{"valid", "name", "John", true, ""},
+		{"empty string", "name", "", false, "cannot be blank"},
+		{"string of spaces", "name", "  ", false, "cannot be blank"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := New()
+			v.ValidatePresenseOf(tt.field, tt.value)
+
+			assertValidation(t, v, tt.field, tt.valid, tt.msg)
+		})
+	}
+}
+
+func TestValidateLengthOf(t *testing.T) {
+	tests := []struct {
+		name  string
+		field string
+		value string
+		min   int
+		max   int
+		valid bool
+		msg   string
+	}{
+		{"valid", "name", "John", 3, 10, true, ""},
+		{"blank", "name", "", 3, 10, true, ""},
+		{"too short", "name", "John", 6, 10, false, "is too short (minimum is 6 characters)"},
+		{"too long", "name", "John", 1, 3, false, "is too long (maximum is 3 characters)"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := New()
+			v.ValidateLengthOf(tt.field, tt.value, tt.min, tt.max)
+
+			assertValidation(t, v, tt.field, tt.valid, tt.msg)
+		})
+	}
+}
+
+func TestValidateEmail(t *testing.T) {
+	tests := []struct {
+		name  string
+		field string
+		value string
+		valid bool
+		msg   string
+	}{
+		{"valid email", "email", "user@example.com", true, ""},
+		{"blank", "email", "", true, ""},
+		{"plain string", "email", "user", false, "is invalid"},
+		{"no user", "email", "@example", false, "is invalid"},
+		{"no domain", "email", "user@", false, "is invalid"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			v := New()
+			v.ValidateEmail(tt.field, tt.value)
+
+			assertValidation(t, v, tt.field, tt.valid, tt.msg)
+		})
+	}
+}
+
+func assertValidation(t *testing.T, v Validator, field string, wantValid bool, wantMsg string) {
+	valid := v.Valid()
+
+	if wantValid {
+		if !valid {
+			t.Error("should be valid, but it's not")
+		}
+		return
+	}
+
+	if len(v.Errors[field]) == 0 {
+		t.Errorf("should have at least 1 error")
+		return
+	}
+
+	msg := v.Errors[field][0]
+	if msg != wantMsg {
+		t.Errorf("%s should have validation error %s, but has %s", wantMsg, wantMsg, msg)
+	}
+}
