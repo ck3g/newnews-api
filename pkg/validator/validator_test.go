@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -15,6 +16,23 @@ func TestValid(t *testing.T) {
 
 	if v.Valid() {
 		t.Error("expected validator to be invalid when it contains errors")
+	}
+}
+
+func TestErrorMessages(t *testing.T) {
+	v := New()
+	v.AddError("username", "cannot be blank")
+	v.AddError("username", "cannot contain spaces")
+	v.AddError("password", "is too short")
+
+	got := v.ErrorMessages()
+	want := []map[string][]string{
+		{"message": []string{"username cannot be blank", "username cannot contain spaces"}},
+		{"message": []string{"password is too short"}},
+	}
+
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("wrong error messages returned; want %+v; got %+v", want, got)
 	}
 }
 

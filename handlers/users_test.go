@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/ck3g/newnews-api/data"
@@ -14,13 +14,12 @@ import (
 
 func TestUsers_Create(t *testing.T) {
 	tests := []struct {
-		name         string
-		username     string
-		password     string
-		wantStatus   int
-		wantError    bool
-		errorMessage string
-		wantToken    string
+		name       string
+		username   string
+		password   string
+		wantStatus int
+		wantError  bool
+		wantBody   []byte
 	}{
 		{
 			"successful create",
@@ -28,8 +27,7 @@ func TestUsers_Create(t *testing.T) {
 			"password",
 			http.StatusCreated,
 			false,
-			"",
-			"fake-token",
+			[]byte(`{"token":"fake-token"}`),
 		},
 		{
 			"existing user",
@@ -37,8 +35,55 @@ func TestUsers_Create(t *testing.T) {
 			"password",
 			http.StatusUnprocessableEntity,
 			true,
-			"User already exists",
+			[]byte(`{"errors":[{"message":["user already exists"]}]}`),
+		},
+		{
+			"blank username",
 			"",
+			"password",
+			http.StatusUnprocessableEntity,
+			true,
+			[]byte(`{"errors":[{"message":["username cannot be blank"]}]}`),
+		},
+		{
+			"blank password",
+			"username",
+			"",
+			http.StatusUnprocessableEntity,
+			true,
+			[]byte(`{"errors":[{"message":["password cannot be blank"]}]}`),
+		},
+		{
+			"username too short",
+			"us",
+			"password",
+			http.StatusUnprocessableEntity,
+			true,
+			[]byte(`{"errors":[{"message":["username is too short (minimum is 3 characters)"]}]}`),
+		},
+		{
+			"username too long",
+			strings.Repeat("a", 21),
+			"password",
+			http.StatusUnprocessableEntity,
+			true,
+			[]byte(`{"errors":[{"message":["username is too long (maximum is 20 characters)"]}]}`),
+		},
+		{
+			"password too short",
+			"username",
+			"pass",
+			http.StatusUnprocessableEntity,
+			true,
+			[]byte(`{"errors":[{"message":["password is too short (minimum is 6 characters)"]}]}`),
+		},
+		{
+			"password too long",
+			"username",
+			strings.Repeat("a", 129),
+			http.StatusUnprocessableEntity,
+			true,
+			[]byte(`{"errors":[{"message":["password is too long (maximum is 128 characters)"]}]}`),
 		},
 	}
 
@@ -46,13 +91,6 @@ func TestUsers_Create(t *testing.T) {
 		Models: data.NewMock(),
 	}
 	handler := http.HandlerFunc(h.UsersCreate)
-
-	type createResponse struct {
-		Error string `json:"error"`
-		Token string `json:"token"`
-	}
-
-	var resp createResponse
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -75,28 +113,19 @@ func TestUsers_Create(t *testing.T) {
 				t.Errorf("wrong status code: want %v; got %v", tt.wantStatus, status)
 			}
 
-			user, err := h.Models.Users.FindByUsername(tt.username)
-			if err != nil {
-				t.Error("expected user to be existed")
+			if rr.Body.String() != string(tt.wantBody) {
+				t.Errorf("wrong response body; want %s; got %s", tt.wantBody, rr.Body.String())
 			}
 
-			err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(tt.password))
-			if err != nil {
-				t.Error("expected hashed password to match the password, but it didn't")
-			}
-
-			err = json.Unmarshal(rr.Body.Bytes(), &resp)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if tt.wantError {
-				if resp.Error != tt.errorMessage {
-					t.Errorf("expected to have error '%s'; got '%s'", tt.errorMessage, resp.Error)
+			if !tt.wantError {
+				user, err := h.Models.Users.FindByUsername(tt.username)
+				if err != nil {
+					t.Error("expected user to be existed")
 				}
-			} else {
-				if resp.Token != tt.wantToken {
-					t.Errorf("wrong token returned; want %s; got %s", tt.wantToken, resp.Token)
+
+				err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(tt.password))
+				if err != nil {
+					t.Error("expected hashed password to match the password, but it didn't")
 				}
 			}
 		})

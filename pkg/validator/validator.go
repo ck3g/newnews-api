@@ -35,6 +35,20 @@ func (v *Validator) AddError(field, msg string) {
 	v.Errors[field] = append(v.Errors[field], msg)
 }
 
+func (v *Validator) ErrorMessages() []map[string][]string {
+	messages := []map[string][]string{}
+
+	for field, errors := range v.Errors {
+		msg := make(map[string][]string)
+		for _, err := range errors {
+			msg["message"] = append(msg["message"], fmt.Sprintf("%s %s", field, err))
+		}
+		messages = append(messages, msg)
+	}
+
+	return messages
+}
+
 func (v *Validator) ValidatePresenseOf(field, value string) {
 	if strings.Trim(value, " ") == "" {
 		v.AddError(field, "cannot be blank")
