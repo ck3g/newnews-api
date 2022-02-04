@@ -30,9 +30,9 @@ func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	v := validator.New()
-	v.ValidatePresenseOf("username", req.Username)
+	v.ValidatePresenceOf("username", req.Username)
 	v.ValidateLengthOf("username", req.Username, 3, 20)
-	v.ValidatePresenseOf("password", req.Password)
+	v.ValidatePresenceOf("password", req.Password)
 	v.ValidateLengthOf("password", req.Password, 6, 128)
 
 	if !v.Valid() {

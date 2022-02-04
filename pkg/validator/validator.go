@@ -49,7 +49,7 @@ func (v *Validator) ErrorMessages() []map[string][]string {
 	return messages
 }
 
-func (v *Validator) ValidatePresenseOf(field, value string) {
+func (v *Validator) ValidatePresenceOf(field, value string) {
 	if strings.Trim(value, " ") == "" {
 		v.AddError(field, "cannot be blank")
 	}

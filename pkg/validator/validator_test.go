@@ -74,7 +74,7 @@ func TestAddError(t *testing.T) {
 	}
 }
 
-func TestValidatePresenseOf(t *testing.T) {
+func TestValidatePresenceOf(t *testing.T) {
 	tests := []struct {
 		name  string
 		field string
@@ -90,7 +90,7 @@ func TestValidatePresenseOf(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			v := New()
-			v.ValidatePresenseOf(tt.field, tt.value)
+			v.ValidatePresenceOf(tt.field, tt.value)
 
 			assertValidation(t, v, tt.field, tt.valid, tt.msg)
 		})
