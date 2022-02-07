@@ -1,10 +1,11 @@
-package data
+package pgdb
 
 import (
 	"context"
 	"errors"
 	"strings"
 
+	"github.com/ck3g/newnews-api/data"
 	"github.com/jackc/pgx/v4"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,7 +20,7 @@ func (m *UserModel) Create(username, password string) (int64, error) {
 	username = strings.Trim(username, " ")
 
 	if m.Exists(username) {
-		return id, ErrUserExists
+		return id, data.ErrUserExists
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -36,8 +37,8 @@ func (m *UserModel) Create(username, password string) (int64, error) {
 	return id, nil
 }
 
-func (m *UserModel) Find(id int64) (*User, error) {
-	var u User
+func (m *UserModel) Find(id int64) (*data.User, error) {
+	var u data.User
 
 	query := "SELECT id, username, email, hashed_password, karma, created_at, updated_at FROM users WHERE id = $1"
 	err := m.DB.QueryRow(context.Background(), query, id).Scan(
@@ -50,8 +51,8 @@ func (m *UserModel) Find(id int64) (*User, error) {
 	return &u, nil
 }
 
-func (m *UserModel) FindByUsername(username string) (*User, error) {
-	var u User
+func (m *UserModel) FindByUsername(username string) (*data.User, error) {
+	var u data.User
 
 	query := "SELECT id, username, email, hashed_password, karma, created_at, updated_at FROM users WHERE LOWER(username) = $1"
 	err := m.DB.QueryRow(context.Background(), query, strings.ToLower(username)).Scan(

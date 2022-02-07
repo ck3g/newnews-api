@@ -3,11 +3,7 @@ package data
 import (
 	"errors"
 	"time"
-
-	"github.com/jackc/pgx/v4"
 )
-
-var db *pgx.Conn
 
 var (
 	ErrUserExists = errors.New("data: user already exists")
@@ -50,20 +46,4 @@ type User struct {
 	Karma          int       `db:"karma" json:"karma"`
 	CreatedAt      time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at" json:"updated_at"`
-}
-
-func New(databasePool *pgx.Conn) Models {
-	db = databasePool
-
-	return Models{
-		Items: &ItemModel{DB: db},
-		Users: &UserModel{DB: db},
-	}
-}
-
-func NewMock() Models {
-	return Models{
-		Items: &MockItemModel{},
-		Users: &MockUserModel{},
-	}
 }

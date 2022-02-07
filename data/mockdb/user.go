@@ -1,21 +1,22 @@
-package data
+package mockdb
 
 import (
 	"errors"
 	"strings"
 	"time"
 
+	"github.com/ck3g/newnews-api/data"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type MockUserModel struct{}
+type UserModel struct{}
 
-var users = []*User{}
+var users = []*data.User{}
 var userLastID int64 = 0
 
-func (m *MockUserModel) Create(username, password string) (int64, error) {
+func (m *UserModel) Create(username, password string) (int64, error) {
 	if m.Exists(username) {
-		return 0, ErrUserExists
+		return 0, data.ErrUserExists
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -23,7 +24,7 @@ func (m *MockUserModel) Create(username, password string) (int64, error) {
 		return 0, err
 	}
 
-	user := &User{
+	user := &data.User{
 		ID:             userLastID + 1,
 		Username:       username,
 		HashedPassword: hashedPassword,
@@ -37,7 +38,7 @@ func (m *MockUserModel) Create(username, password string) (int64, error) {
 	return user.ID, nil
 }
 
-func (m *MockUserModel) Find(id int64) (*User, error) {
+func (m *UserModel) Find(id int64) (*data.User, error) {
 	for _, user := range users {
 		if user.ID == id {
 			return user, nil
@@ -47,7 +48,7 @@ func (m *MockUserModel) Find(id int64) (*User, error) {
 	return nil, errors.New("user not found")
 }
 
-func (m *MockUserModel) FindByUsername(username string) (*User, error) {
+func (m *UserModel) FindByUsername(username string) (*data.User, error) {
 	for _, user := range users {
 		if strings.EqualFold(user.Username, username) {
 			return user, nil
@@ -57,13 +58,13 @@ func (m *MockUserModel) FindByUsername(username string) (*User, error) {
 	return nil, errors.New("user not found")
 }
 
-func (m *MockUserModel) Exists(username string) bool {
+func (m *UserModel) Exists(username string) bool {
 	_, err := m.FindByUsername(username)
 
 	return err == nil
 }
 
-func (m *MockUserModel) Truncate() {
-	users = []*User{}
+func (m *UserModel) Truncate() {
+	users = []*data.User{}
 	userLastID = 0
 }

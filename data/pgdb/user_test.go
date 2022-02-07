@@ -1,4 +1,4 @@
-package data
+package pgdb
 
 import (
 	"testing"

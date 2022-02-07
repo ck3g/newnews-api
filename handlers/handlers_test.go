@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/ck3g/newnews-api/data"
+	"github.com/ck3g/newnews-api/data/mockdb"
 	"github.com/ck3g/newnews-api/pkg/jsonh"
 )
 
@@ -41,7 +42,7 @@ func TestHomeHandler(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	h := Handlers{
-		Models: data.NewMock(),
+		Models: mockdb.New(),
 	}
 	item1 := data.Item{
 		Title:    "Google",
