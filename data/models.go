@@ -6,15 +6,17 @@ import (
 )
 
 var (
-	ErrUserExists = errors.New("data: user already exists")
+	ErrUserExists       = errors.New("data: user already exists")
+	ErrUserDoesNotExist = errors.New("data: user does not exist")
 )
 
 type Models struct {
-	Items ItemsDatastorage
-	Users UsersDatastorage
+	Items        ItemsDataStorage
+	Users        UsersDataStorage
+	AuthSessions AuthSessionDataStorage
 }
 
-type ItemsDatastorage interface {
+type ItemsDataStorage interface {
 	AllNew() ([]*Item, error)
 	Create(item Item) (int64, error)
 	Find(id int64) (*Item, error)
@@ -31,7 +33,7 @@ type Item struct {
 	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 }
 
-type UsersDatastorage interface {
+type UsersDataStorage interface {
 	Create(username, password string) (int64, error)
 	Find(id int64) (*User, error)
 	FindByUsername(username string) (*User, error)
@@ -46,4 +48,17 @@ type User struct {
 	Karma          int       `db:"karma" json:"karma"`
 	CreatedAt      time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at" json:"updated_at"`
+}
+
+type AuthSessionDataStorage interface {
+	GenerateForUserID(id int64) (string, error)
+}
+
+type AuthSession struct {
+	ID        int64     `db:"id" json:"id"`
+	Token     string    `db:"token" json:"token"`
+	UserID    int64     `db:"user_id" json:"user_id"`
+	ExpiredAt time.Time `db:"expired_at" json:"expired_at"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 }

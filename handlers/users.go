@@ -41,14 +41,21 @@ func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = h.Models.Users.Create(req.Username, req.Password)
+	userID, err := h.Models.Users.Create(req.Username, req.Password)
 	if err != nil {
 		env := envelope{"errors": createUserErrorMessage(err)}
 		h.writeJSON(w, http.StatusUnprocessableEntity, env, nil)
 		return
 	}
 
-	env := envelope{"token": "fake-token"}
+	token, err := h.Models.AuthSessions.GenerateForUserID(userID)
+	if err != nil {
+		env := envelope{"errors": createUserErrorMessage(err)}
+		h.writeJSON(w, http.StatusInternalServerError, env, nil)
+		return
+	}
+
+	env := envelope{"token": token}
 
 	h.writeJSON(w, http.StatusCreated, env, nil)
 }
