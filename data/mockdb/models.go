@@ -2,9 +2,9 @@ package mockdb
 
 import "github.com/ck3g/newnews-api/data"
 
-func NewMock() data.Models {
+func New() data.Models {
 	return data.Models{
-		Items: &MockItemModel{},
-		Users: &MockUserModel{},
+		Items: &ItemModel{},
+		Users: &UserModel{},
 	}
 }

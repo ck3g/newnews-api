@@ -7,7 +7,7 @@ import (
 )
 
 func TestMockUser_Create(t *testing.T) {
-	model := MockUserModel{}
+	model := UserModel{}
 	model.Truncate()
 
 	id, err := model.Create("user", "password")
@@ -36,7 +36,7 @@ func TestMockUser_Create(t *testing.T) {
 }
 
 func TestMockUser_Find(t *testing.T) {
-	model := MockUserModel{}
+	model := UserModel{}
 	model.Truncate()
 
 	id, _ := model.Create("user", "password")
@@ -57,7 +57,7 @@ func TestMockUser_Find(t *testing.T) {
 }
 
 func TestMockUser_FindByUsername(t *testing.T) {
-	model := MockUserModel{}
+	model := UserModel{}
 	model.Truncate()
 
 	id, _ := model.Create("UserName", "password")
@@ -78,7 +78,7 @@ func TestMockUser_FindByUsername(t *testing.T) {
 }
 
 func TestMockUser_Exists(t *testing.T) {
-	model := MockUserModel{}
+	model := UserModel{}
 	model.Truncate()
 
 	model.Create("UserName", "password")

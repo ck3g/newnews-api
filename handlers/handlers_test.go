@@ -42,7 +42,7 @@ func TestHomeHandler(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	h := Handlers{
-		Models: mockdb.NewMock(),
+		Models: mockdb.New(),
 	}
 	item1 := data.Item{
 		Title:    "Google",

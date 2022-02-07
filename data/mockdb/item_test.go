@@ -7,7 +7,7 @@ import (
 )
 
 func TestMockItem_AllNew(t *testing.T) {
-	model := MockItemModel{}
+	model := ItemModel{}
 	model.Truncate()
 
 	items, _ := model.AllNew()
@@ -33,7 +33,7 @@ func TestMockItem_AllNew(t *testing.T) {
 }
 
 func TestMockItem_Create(t *testing.T) {
-	model := MockItemModel{}
+	model := ItemModel{}
 	model.Truncate()
 
 	item := data.Item{
@@ -60,7 +60,7 @@ func TestMockItem_Create(t *testing.T) {
 }
 
 func TestMockItem_Find(t *testing.T) {
-	model := MockItemModel{}
+	model := ItemModel{}
 	model.Truncate()
 
 	item, err := model.Find(1)
@@ -88,7 +88,7 @@ func TestMockItem_Find(t *testing.T) {
 }
 
 func TestMockItem_Destroy(t *testing.T) {
-	model := MockItemModel{}
+	model := ItemModel{}
 	model.Truncate()
 
 	id1, _ := model.Create(data.Item{

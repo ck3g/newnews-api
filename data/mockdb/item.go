@@ -7,17 +7,17 @@ import (
 	"github.com/ck3g/newnews-api/data"
 )
 
-type MockItemModel struct {
+type ItemModel struct {
 }
 
 var items []*data.Item
 var lastID int64
 
-func (m *MockItemModel) AllNew() ([]*data.Item, error) {
+func (m *ItemModel) AllNew() ([]*data.Item, error) {
 	return items, nil
 }
 
-func (m *MockItemModel) Create(item data.Item) (int64, error) {
+func (m *ItemModel) Create(item data.Item) (int64, error) {
 	item.ID = lastID + 1
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
@@ -29,7 +29,7 @@ func (m *MockItemModel) Create(item data.Item) (int64, error) {
 	return item.ID, nil
 }
 
-func (m *MockItemModel) Find(id int64) (*data.Item, error) {
+func (m *ItemModel) Find(id int64) (*data.Item, error) {
 	for _, item := range items {
 		if item.ID == id {
 			return item, nil
@@ -39,7 +39,7 @@ func (m *MockItemModel) Find(id int64) (*data.Item, error) {
 	return nil, errors.New("not found")
 }
 
-func (m *MockItemModel) Destroy(id int64) {
+func (m *ItemModel) Destroy(id int64) {
 	var index int
 	for i, item := range items {
 		if item.ID == id {
@@ -52,7 +52,7 @@ func (m *MockItemModel) Destroy(id int64) {
 	}
 }
 
-func (m *MockItemModel) Truncate() {
+func (m *ItemModel) Truncate() {
 	items = []*data.Item{}
 	lastID = 0
 }

@@ -88,7 +88,7 @@ func TestUsers_Create(t *testing.T) {
 	}
 
 	h := Handlers{
-		Models: mockdb.NewMock(),
+		Models: mockdb.New(),
 	}
 	handler := http.HandlerFunc(h.UsersCreate)
 
@@ -96,7 +96,7 @@ func TestUsers_Create(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rr := httptest.NewRecorder()
 
-			mockUserModel := mockdb.MockItemModel{}
+			mockUserModel := mockdb.ItemModel{}
 			mockUserModel.Truncate()
 			h.Models.Users.Create("exists@example.com", "password")
 
