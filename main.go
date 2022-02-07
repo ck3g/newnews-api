@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/ck3g/newnews-api/data"
+	"github.com/ck3g/newnews-api/data/pgdb"
 	"github.com/ck3g/newnews-api/handlers"
 	"github.com/jackc/pgx/v4"
 	"github.com/joho/godotenv"
@@ -33,7 +34,7 @@ func main() {
 	}
 	defer db.Close(context.Background())
 
-	models := data.New(db)
+	models := pgdb.New(db)
 	app := &application{
 		Handlers: &handlers.Handlers{
 			Models: models,

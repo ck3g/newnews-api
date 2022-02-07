@@ -1,4 +1,4 @@
-package data
+package mockdb
 
 import (
 	"testing"

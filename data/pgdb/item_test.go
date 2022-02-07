@@ -1,6 +1,10 @@
-package data
+package pgdb
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/ck3g/newnews-api/data"
+)
 
 type TestItem struct {
 	Title    string
@@ -46,7 +50,7 @@ func TestItem_Create(t *testing.T) {
 
 	model := ItemModel{DB: db}
 
-	item := Item{
+	item := data.Item{
 		Title:    "Apple",
 		Link:     "https://apple.com",
 		FromSite: "apple.com",
@@ -89,7 +93,7 @@ func TestItem_Find(t *testing.T) {
 
 	model := ItemModel{DB: db}
 
-	item := Item{
+	item := data.Item{
 		Title:    "Apple",
 		Link:     "https://apple.com",
 		FromSite: "apple.com",

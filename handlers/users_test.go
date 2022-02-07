@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ck3g/newnews-api/data"
+	"github.com/ck3g/newnews-api/data/mockdb"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -88,7 +88,7 @@ func TestUsers_Create(t *testing.T) {
 	}
 
 	h := Handlers{
-		Models: data.NewMock(),
+		Models: mockdb.NewMock(),
 	}
 	handler := http.HandlerFunc(h.UsersCreate)
 
@@ -96,7 +96,7 @@ func TestUsers_Create(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			rr := httptest.NewRecorder()
 
-			mockUserModel := data.MockItemModel{}
+			mockUserModel := mockdb.MockItemModel{}
 			mockUserModel.Truncate()
 			h.Models.Users.Create("exists@example.com", "password")
 

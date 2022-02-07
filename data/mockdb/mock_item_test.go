@@ -1,6 +1,10 @@
-package data
+package mockdb
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/ck3g/newnews-api/data"
+)
 
 func TestMockItem_AllNew(t *testing.T) {
 	model := MockItemModel{}
@@ -11,7 +15,7 @@ func TestMockItem_AllNew(t *testing.T) {
 		t.Error("Items returned when not expected")
 	}
 
-	id, _ := model.Create(Item{
+	id, _ := model.Create(data.Item{
 		Title:    "Google",
 		Link:     "https://google.com",
 		Points:   10,
@@ -32,7 +36,7 @@ func TestMockItem_Create(t *testing.T) {
 	model := MockItemModel{}
 	model.Truncate()
 
-	item := Item{
+	item := data.Item{
 		Title:    "Google",
 		Link:     "https://google.com",
 		Points:   10,
@@ -67,7 +71,7 @@ func TestMockItem_Find(t *testing.T) {
 		t.Error("Item returned but it should not")
 	}
 
-	id, _ := model.Create(Item{
+	id, _ := model.Create(data.Item{
 		Title:    "Google",
 		Link:     "https://google.com",
 		Points:   10,
@@ -87,13 +91,13 @@ func TestMockItem_Destroy(t *testing.T) {
 	model := MockItemModel{}
 	model.Truncate()
 
-	id1, _ := model.Create(Item{
+	id1, _ := model.Create(data.Item{
 		Title: "Google",
 	})
-	id2, _ := model.Create(Item{
+	id2, _ := model.Create(data.Item{
 		Title: "Microsoft",
 	})
-	id3, _ := model.Create(Item{
+	id3, _ := model.Create(data.Item{
 		Title: "Apple",
 	})
 
