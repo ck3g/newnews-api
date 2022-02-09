@@ -48,7 +48,7 @@ func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := h.Models.AuthSessions.GenerateForUserID(userID)
+	token, err := h.Models.AuthSessions.Authenticate(userID)
 	if err != nil {
 		env := envelope{"errors": createUserErrorMessage(err)}
 		h.writeJSON(w, http.StatusInternalServerError, env, nil)

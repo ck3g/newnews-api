@@ -14,7 +14,7 @@ type AuthSessionModel struct {
 	DB *pgx.Conn
 }
 
-func (m *AuthSessionModel) GenerateForUserID(userID int64) (string, error) {
+func (m *AuthSessionModel) Authenticate(userID int64) (string, error) {
 	models := New(m.DB)
 	_, err := models.Users.Find(userID)
 	if err != nil {

@@ -9,14 +9,14 @@ import (
 	"github.com/ck3g/newnews-api/data"
 )
 
-func TestAuthSession_GenerateForUserID(t *testing.T) {
+func TestAuthSession_Authenticate(t *testing.T) {
 	db := newTestDB(t)
 
-	model := AuthSessionModel{DB: db}
+	authSession := AuthSessionModel{DB: db}
 
 	var userID int64
 
-	_, err := model.GenerateForUserID(userID)
+	_, err := authSession.Authenticate(userID)
 	if !errors.Is(err, data.ErrUserDoesNotExist) {
 		t.Error("expected an error when user does not exist, but got nothing")
 	}
@@ -24,7 +24,7 @@ func TestAuthSession_GenerateForUserID(t *testing.T) {
 	userModel := UserModel{DB: db}
 	userID, _ = userModel.Create("user", "password")
 
-	token, err := model.GenerateForUserID(userID)
+	token, err := authSession.Authenticate(userID)
 	if err != nil {
 		t.Errorf("expected no error when user exists, but got one %v", err)
 	}

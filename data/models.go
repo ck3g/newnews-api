@@ -51,7 +51,7 @@ type User struct {
 }
 
 type AuthSessionDataStorage interface {
-	GenerateForUserID(id int64) (string, error)
+	Authenticate(id int64) (string, error)
 }
 
 type AuthSession struct {
