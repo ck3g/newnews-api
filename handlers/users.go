@@ -14,19 +14,11 @@ type createUserRequestBody struct {
 	Password string `json:"password"`
 }
 
-// TODO: move to handlers/helpers (or handlers/errors)
-type responseError struct {
-	Message []string `json:"message"`
-}
-
 func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
 	var req createUserRequestBody
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		env := envelope{"errors": []responseError{
-			{Message: []string{"Bad request"}},
-		}}
-		h.writeJSON(w, http.StatusBadRequest, env, nil)
+		h.badRequestResponse(w)
 		return
 	}
 
@@ -34,22 +26,19 @@ func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
 	validateUsernameAndPassword(v, req.Username, req.Password)
 
 	if !v.Valid() {
-		env := envelope{"errors": v.ErrorMessages()}
-		h.writeJSON(w, http.StatusUnprocessableEntity, env, nil)
+		h.validationErrorResponse(w, v.ErrorMessages())
 		return
 	}
 
 	userID, err := h.Models.Users.Create(req.Username, req.Password)
 	if err != nil {
-		env := envelope{"errors": createUserErrorMessage(err)}
-		h.writeJSON(w, http.StatusUnprocessableEntity, env, nil)
+		h.validationErrorResponse(w, createUserErrorMessage(err))
 		return
 	}
 
 	token, err := h.Models.AuthSessions.Authenticate(userID)
 	if err != nil {
-		env := envelope{"errors": createUserErrorMessage(err)}
-		h.writeJSON(w, http.StatusInternalServerError, env, nil)
+		h.validationErrorResponse(w, createUserErrorMessage(err))
 		return
 	}
 
@@ -60,12 +49,8 @@ func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
 
 func createUserErrorMessage(err error) []responseError {
 	if errors.Is(err, data.ErrUserExists) {
-		return []responseError{
-			{Message: []string{"user already exists"}},
-		}
+		return responseErrorMessage("user already exists")
 	}
 
-	return []responseError{
-		{Message: []string{"Something went wrong"}},
-	}
+	return responseErrorMessage("Something went wrong")
 }
