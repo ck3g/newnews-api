@@ -9,10 +9,9 @@ import (
 	"testing"
 
 	"github.com/ck3g/newnews-api/data/mockdb"
-	"golang.org/x/crypto/bcrypt"
 )
 
-func TestUsers_Create(t *testing.T) {
+func TestTokens_Create(t *testing.T) {
 	tests := []struct {
 		name       string
 		username   string
@@ -22,7 +21,7 @@ func TestUsers_Create(t *testing.T) {
 		wantBody   []byte
 	}{
 		{
-			"successful create",
+			"successful login",
 			"user@example.com",
 			"password",
 			http.StatusCreated,
@@ -30,12 +29,20 @@ func TestUsers_Create(t *testing.T) {
 			[]byte(`{"token":"fake-token"}`),
 		},
 		{
-			"existing user",
-			"exists@example.com",
+			"invalid username",
+			"unknown@example.com",
 			"password",
 			http.StatusUnprocessableEntity,
 			true,
-			[]byte(`{"errors":[{"message":["user already exists"]}]}`),
+			[]byte(`{"errors":[{"message":["Invalid username or password"]}]}`),
+		},
+		{
+			"invalid password",
+			"user@example.com",
+			"invalid-password",
+			http.StatusUnprocessableEntity,
+			true,
+			[]byte(`{"errors":[{"message":["Invalid username or password"]}]}`),
 		},
 		{
 			"blank username",
@@ -90,7 +97,7 @@ func TestUsers_Create(t *testing.T) {
 	h := Handlers{
 		Models: mockdb.New(),
 	}
-	handler := http.HandlerFunc(h.UsersCreate)
+	handler := http.HandlerFunc(h.TokenCreate)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -98,10 +105,13 @@ func TestUsers_Create(t *testing.T) {
 
 			mockUserModel := mockdb.UserModel{}
 			mockUserModel.Truncate()
-			h.Models.Users.Create("exists@example.com", "password")
+			_, err := mockUserModel.Create("user@example.com", "password")
+			if err != nil {
+				t.Fatal(err)
+			}
 
 			body := []byte(fmt.Sprintf(`{"username":"%s","password":"%s"}`, tt.username, tt.password))
-			req, err := http.NewRequest("POST", "/users/create", bytes.NewBuffer(body))
+			req, err := http.NewRequest("POST", "/token", bytes.NewBuffer(body))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -115,18 +125,6 @@ func TestUsers_Create(t *testing.T) {
 
 			if rr.Body.String() != string(tt.wantBody) {
 				t.Errorf("wrong response body; want %s; got %s", tt.wantBody, rr.Body.String())
-			}
-
-			if !tt.wantError {
-				user, err := h.Models.Users.FindByUsername(tt.username)
-				if err != nil {
-					t.Error("expected user to be existed")
-				}
-
-				err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(tt.password))
-				if err != nil {
-					t.Error("expected hashed password to match the password, but it didn't")
-				}
 			}
 		})
 	}

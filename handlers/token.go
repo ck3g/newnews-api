@@ -2,25 +2,19 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
-	"github.com/ck3g/newnews-api/data"
 	"github.com/ck3g/newnews-api/pkg/validator"
+	"golang.org/x/crypto/bcrypt"
 )
 
-type createUserRequestBody struct {
+type createTokenRequestBody struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-// TODO: move to handlers/helpers (or handlers/errors)
-type responseError struct {
-	Message []string `json:"message"`
-}
-
-func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
-	var req createUserRequestBody
+func (h *Handlers) TokenCreate(w http.ResponseWriter, r *http.Request) {
+	var req createTokenRequestBody
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		env := envelope{"errors": []responseError{
@@ -42,16 +36,29 @@ func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := h.Models.Users.Create(req.Username, req.Password)
+	user, err := h.Models.Users.FindByUsername(req.Username)
 	if err != nil {
-		env := envelope{"errors": createUserErrorMessage(err)}
+		env := envelope{"errors": []responseError{
+			{Message: []string{"Invalid username or password"}},
+		}}
 		h.writeJSON(w, http.StatusUnprocessableEntity, env, nil)
 		return
 	}
 
-	token, err := h.Models.AuthSessions.Authenticate(userID)
+	err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(req.Password))
 	if err != nil {
-		env := envelope{"errors": createUserErrorMessage(err)}
+		env := envelope{"errors": []responseError{
+			{Message: []string{"Invalid username or password"}},
+		}}
+		h.writeJSON(w, http.StatusUnprocessableEntity, env, nil)
+		return
+	}
+
+	token, err := h.Models.AuthSessions.Authenticate(user.ID)
+	if err != nil {
+		env := envelope{"errors": []responseError{
+			{Message: []string{"Something went wrong"}},
+		}}
 		h.writeJSON(w, http.StatusInternalServerError, env, nil)
 		return
 	}
@@ -59,16 +66,4 @@ func (h *Handlers) UsersCreate(w http.ResponseWriter, r *http.Request) {
 	env := envelope{"token": token}
 
 	h.writeJSON(w, http.StatusCreated, env, nil)
-}
-
-func createUserErrorMessage(err error) []responseError {
-	if errors.Is(err, data.ErrUserExists) {
-		return []responseError{
-			{Message: []string{"user already exists"}},
-		}
-	}
-
-	return []responseError{
-		{Message: []string{"Something went wrong"}},
-	}
 }
