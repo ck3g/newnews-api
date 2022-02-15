@@ -101,7 +101,7 @@ func TestUsers_Create(t *testing.T) {
 			h.Models.Users.Create("exists@example.com", "password")
 
 			body := []byte(fmt.Sprintf(`{"username":"%s","password":"%s"}`, tt.username, tt.password))
-			req, err := http.NewRequest("POST", "/users/create", bytes.NewBuffer(body))
+			req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(body))
 			if err != nil {
 				t.Fatal(err)
 			}

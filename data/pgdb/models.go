@@ -11,7 +11,8 @@ func New(databasePool *pgx.Conn) data.Models {
 	db = databasePool
 
 	return data.Models{
-		Items: &ItemModel{DB: db},
-		Users: &UserModel{DB: db},
+		Items:        &ItemModel{DB: db},
+		Users:        &UserModel{DB: db},
+		AuthSessions: &AuthSessionModel{DB: db},
 	}
 }
