@@ -25,10 +25,7 @@ func (h *Handlers) TokenCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	v := validator.New()
-	v.ValidatePresenceOf("username", req.Username)
-	v.ValidateLengthOf("username", req.Username, 3, 20)
-	v.ValidatePresenceOf("password", req.Password)
-	v.ValidateLengthOf("password", req.Password, 6, 128)
+	validateUsernameAndPassword(v, req.Username, req.Password)
 
 	if !v.Valid() {
 		env := envelope{"errors": v.ErrorMessages()}
